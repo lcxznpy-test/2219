@@ -25,5 +25,5 @@ jobs:
       - run: npm install @octokit/action
       - run: node .github/scripts/2219.js
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION_2219 }}
           Issue_ID: ${{ github.event.issue.number }}
