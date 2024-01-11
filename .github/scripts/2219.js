@@ -15,7 +15,7 @@ async function run() {
     // console.log(issueNumber);
     const issue = await octokit.rest.issues.get({
       owner: process.env.GITHUB_REPOSITORY_OWNER,
-      repo: "asdf",
+      repo: "2219",
       issue_number: issueNumber,
     });
     // console.log("成功获得issue信息",issue);
