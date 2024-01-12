@@ -1,47 +1,61 @@
 const { Octokit } = require("@octokit/action");
-// const core = require('@actions/core');
+const fetch = require("node-fetch");
 
-const octokit = new Octokit();
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+});
+const githubApiEndpoint = "https://api.github.com/graphql";
 
+// 提pr用的
+// const organizationLogin = "matrixorigin";
+
+// test
+const organizationLogin = "lcxznpy-test";
+const token = process.env.GITHUB_TOKEN;
+const art = "Bearer "+token;
 async function run() {
   try {
     console.log("开始啦");
     const issueNumber = process.env.Issue_ID;
 
-    // 获取 issue 的信息
-    console.log("尝试获取issue的详细信息");
-    // console.log(process.env.GITHUB_REPOSITORY_OWNER);
-    // console.log(process.env.GITHUB_REPOSITORY);
-    // console.log(issueNumber);
+    // // 获取 issue 的详细信息
     const issue = await octokit.rest.issues.get({
       owner: process.env.GITHUB_REPOSITORY_OWNER,
-      repo: "2219",
+      repo: "2219",         
       issue_number: issueNumber,
     });
-    // console.log("成功获得issue信息",issue);
+    // 获取assignees列表
     const assignees = issue.data.assignees;
-    // console.log("成功获得assignee信息",assignees);
+    // 获取issue的node_id
+    const issue_node_id = issue.data.node_id;
     if (assignees.length === 0) {
       console.log("Issue 没有 assignee，不进行项目关联");
       return;
     }
-
+    // test-map  team与project的映射 实际提交改过来
     const projectMapping = {
       'c1': 1,
       'c2': 2,
     };
+    // 用来提pr的map
+    // const projectMapping = {
+    //   'compute-group-1': 33,
+    //   'compute-group-2': 36,
+    //   'storage-group': 35,
+    // };
 
     const projectsToAssociate = [];
-
+    // 获取org下的team列表
     const teams = await octokit.rest.teams.list({
-        org: "lcxznpy-test",  // 替换为你的组织名
+        org: organizationLogin,  
       });
+    //判断team下是否包含某个成员,是就将映射的projectid放到projectsToAssociate里
     for(const team_data of teams.data){
       const team_member = await octokit.rest.teams.listMembersInOrg({
-            org: "lcxznpy-test",
+            org: organizationLogin,
             team_slug: team_data.slug,
           });
-      console.log("team_member",team_member);
+      // console.log("team_member",team_member);
       for(const assignee of assignees){
         if(team_member.data.find((m) => m.login === assignee.login)){
           if(projectMapping[team_data.slug]){
@@ -49,42 +63,68 @@ async function run() {
             console.log("成功push一个信息");
           }
         }
-          
       }
     }
-    // for (const assignee of assignees) {
-    //   const teams = await octokit.rest.teams.list({
-    //     org: "lcxznpy-test",  // 替换为你的组织名
-    //   });
-    //   console.log("成功获得team信息",teams);
-    //   const team = teams.data.find((t) => t.members.some((m) => m.login === assignee.login));
-      
-    //   if (team && projectMapping[team.slug]) {
-        // projectsToAssociate.push(projectMapping[team.slug]);
-        // console.log("成功push一个信息");
-    //   }
-    // }
 
     if (projectsToAssociate.length === 0) {
-      console.log("没有组织，使用默认组织");
-      projectsToAssociate.push(3); // 默认 project ID
+      console.log("没有team，放到默认project下");
+      projectsToAssociate.push(3); 
+      // 提pr用的
+      // projectsToAssociate.push(13); 
     }
+    // 去重，上面获取的projectid可能有重复，因为一个assignee可以在多个的team下，
     const result = Array.from(new Set(projectsToAssociate))
     console.log(result)
+
+    // graphql  的header
+    const headers = {
+        'Authorization': art,
+        'Content-Type': 'application/json',
+      };
+    //根据projectid获取对应的node-id，然后插入issue
     for (const projectId of result) {
-      // 将 issue 添加到项目
-      console.log("开始将issue关联到项目");
-      await octokit.rest.projects.createCard({
-        column_id: projectId, // 你的项目中的列的 ID
-        content_id: issueNumber,
-        content_type: "Issue",
-      });
-        
-      console.log("Issue ${issueNumber} 关联到项目 ${projectId}");
+    // 通过graphql获取node-id的语句
+    var query = `
+        query {
+          organization(login: "${organizationLogin}") {
+            projectV2(number: ${projectId}) {
+              id
+            }
+          }
+        }
+      `;
+      var options = {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ query }),
+        };
+      let pid;   // 存node-id
+      // 获取node-id的请求
+      const resp = await fetch(githubApiEndpoint, options);
+      const resp_json = await resp.json();
+      pid = resp_json.data.organization.projectV2.id;
+      console.log('Project ID:', pid);
+      // 通过graphql向project插入issue的语句
+      var query=`
+          mutation{
+            addProjectV2ItemById(input:{projectId: \"${pid}\" contentId: \"${issue_node_id}\" }){
+                item  {
+                   id   
+                  }
+                }
+          }
+        `;
+      var options = {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ query }),
+        };
+      // 插入issue的请求
+      const resp_add = await fetch(githubApiEndpoint, options);
+        const resp_add_json = await resp_add.json();
     }
   } catch (error) {
-    // core.setFailed(error.message);
-    console.log(error)
+    console.log(error.message)
   }
 }
 
