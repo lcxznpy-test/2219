@@ -20,10 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: echo ${{ github.event.issue.number }}
-      - run: cat .github/scripts/2219.js
-      - run: npm install @octokit/action
+      - name: npn install dependency
+        run: |
+          npm install @octokit/action
+          npm install node-fetch
+          cat package.json
+          # 给node-fetch降级，不然2219.js导入不了
+          npm i node-fetch@2.6.1
       - run: node .github/scripts/2219.js
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION_2219 }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION }}
           Issue_ID: ${{ github.event.issue.number }}
