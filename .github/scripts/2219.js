@@ -9,16 +9,14 @@ const githubApiEndpoint = "https://api.github.com/graphql";
 // 提pr用的
 // const organizationLogin = "matrixorigin";
 
-// test
 const organizationLogin = "lcxznpy-test";
 const token = process.env.GITHUB_TOKEN;
 const art = "Bearer "+token;
 async function run() {
   try {
-    console.log("开始啦");
     const issueNumber = process.env.Issue_ID;
 
-    // // 获取 issue 的详细信息
+    // 获取 issue 的详细信息
     const issue = await octokit.rest.issues.get({
       owner: process.env.GITHUB_REPOSITORY_OWNER,
       repo: "2219",         
@@ -32,7 +30,6 @@ async function run() {
       console.log("Issue 没有 assignee，不进行项目关联");
       return;
     }
-    // test-map  team与project的映射 实际提交改过来
     const projectMapping = {
       'c1': 1,
       'c2': 2,
@@ -69,10 +66,9 @@ async function run() {
     if (projectsToAssociate.length === 0) {
       console.log("没有team，放到默认project下");
       projectsToAssociate.push(3); 
-      // 提pr用的
       // projectsToAssociate.push(13); 
     }
-    // 去重，上面获取的projectid可能有重复，因为一个assignee可以在多个的team下，
+    // 去重，获取的projectid可能有重复，因为一个assignee可以在多个的team下，
     const result = Array.from(new Set(projectsToAssociate))
     console.log(result)
 
@@ -83,7 +79,7 @@ async function run() {
       };
     //根据projectid获取对应的node-id，然后插入issue
     for (const projectId of result) {
-    // 通过graphql获取node-id的语句
+    // 通过graphql获取node-id的query
     var query = `
         query {
           organization(login: "${organizationLogin}") {
@@ -104,7 +100,7 @@ async function run() {
       const resp_json = await resp.json();
       pid = resp_json.data.organization.projectV2.id;
       console.log('Project ID:', pid);
-      // 通过graphql向project插入issue的语句
+      // 通过graphql向project插入issue的query
       var query=`
           mutation{
             addProjectV2ItemById(input:{projectId: \"${pid}\" contentId: \"${issue_node_id}\" }){
@@ -119,7 +115,7 @@ async function run() {
           headers: headers,
           body: JSON.stringify({ query }),
         };
-      // 插入issue的请求
+      // 向project中插入issue
       const resp_add = await fetch(githubApiEndpoint, options);
         const resp_add_json = await resp_add.json();
     }
