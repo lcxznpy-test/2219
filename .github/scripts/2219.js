@@ -109,7 +109,7 @@ async function run() {
           body: JSON.stringify({ query }),
         };
       // 向project中插入issue
-      await fetch(githubApiEndpoint, options);
+      const qaq = await fetch(githubApiEndpoint, options);
     }
   } catch (error) {
     console.log(error.message)
