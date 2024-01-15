@@ -30,9 +30,8 @@ async function run() {
       return;
     }
     const projectMapping = {
-      'compute-group-1': 33,
-      'compute-group-2': 36,
-      'storage-group': 35,
+      'c1': 1,
+      'c2': 2,
     };
 
     const projectsToAssociate = [];
@@ -109,7 +108,8 @@ async function run() {
           body: JSON.stringify({ query }),
         };
       // 向project中插入issue
-      const qaq = await fetch(githubApiEndpoint, options);
+      await fetch(githubApiEndpoint, options);
+      console.log("success");
     }
   } catch (error) {
     console.log(error.message)
