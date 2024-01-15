@@ -15,11 +15,11 @@ const art = "Bearer "+token;
 async function run() {
   try {
     const issueNumber = process.env.Issue_ID;
-
+    console.log(process.env.repo_name);
     // 获取 issue 的详细信息
     const issue = await octokit.rest.issues.get({
       owner: process.env.GITHUB_REPOSITORY_OWNER,
-      repo: "2219",         
+      repo: process.env.repo_name,         
       issue_number: issueNumber,
     });
     // 获取assignees列表
