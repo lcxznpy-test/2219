@@ -18,7 +18,7 @@ async function run() {
     // 获取 issue 的详细信息
     const issue = await octokit.rest.issues.get({
       owner: process.env.GITHUB_REPOSITORY_OWNER,
-      repo: "matrixone",         
+      repo: "2219",         
       issue_number: issueNumber,
     });
     // 获取assignees列表
