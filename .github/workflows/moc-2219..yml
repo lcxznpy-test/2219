@@ -22,6 +22,10 @@ jobs:
           npm install node-fetch
           # 给node-fetch降级，不然2219.js导入不了
           npm i node-fetch@2.6.1
+          repo=${{{github.repository}}#*/}
+          echo $repo
+        env:
+          repo_name: $repo
       - run: node .github/scripts/2219.js
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION_2219 }}
