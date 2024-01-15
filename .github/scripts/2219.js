@@ -109,8 +109,7 @@ async function run() {
           body: JSON.stringify({ query }),
         };
       // 向project中插入issue
-      const resp_add = await fetch(githubApiEndpoint, options);
-        const resp_add_json = await resp_add.json();
+      await fetch(githubApiEndpoint, options);
     }
   } catch (error) {
     console.log(error.message)
