@@ -9,17 +9,16 @@ const githubApiEndpoint = "https://api.github.com/graphql";
 // 提pr用的
 // const organizationLogin = "matrixorigin";
 
-const organizationLogin = "lcxznpy-test";
+const organizationLogin = process.env.GITHUB_REPOSITORY_OWNER;
 const token = process.env.GITHUB_TOKEN;
 const art = "Bearer "+token;
 async function run() {
   try {
     const issueNumber = process.env.Issue_ID;
-    console.log(process.env.repo_name);
     // 获取 issue 的详细信息
     const issue = await octokit.rest.issues.get({
       owner: process.env.GITHUB_REPOSITORY_OWNER,
-      repo: process.env.repo_name,         
+      repo: "matrixone",         
       issue_number: issueNumber,
     });
     // 获取assignees列表
@@ -31,15 +30,10 @@ async function run() {
       return;
     }
     const projectMapping = {
-      'c1': 1,
-      'c2': 2,
+      'compute-group-1': 33,
+      'compute-group-2': 36,
+      'storage-group': 35,
     };
-    // 用来提pr的map
-    // const projectMapping = {
-    //   'compute-group-1': 33,
-    //   'compute-group-2': 36,
-    //   'storage-group': 35,
-    // };
 
     const projectsToAssociate = [];
     // 获取org下的team列表
@@ -65,8 +59,7 @@ async function run() {
 
     if (projectsToAssociate.length === 0) {
       console.log("没有team，放到默认project下");
-      projectsToAssociate.push(3); 
-      // projectsToAssociate.push(13); 
+      projectsToAssociate.push(13); 
     }
     // 去重，获取的projectid可能有重复，因为一个assignee可以在多个的team下，
     const result = Array.from(new Set(projectsToAssociate))
