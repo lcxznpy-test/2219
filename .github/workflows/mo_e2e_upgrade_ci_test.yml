@@ -9,7 +9,7 @@ env:
 
 jobs:
   upgrade-release-linux-x86:
-    runs-on: amd64-shanghai-mo
+    runs-on: ubuntu-latest
     name: Compatibility Test on Linux/x64(LAUNCH)
     timeout-minutes: 90
 
@@ -168,7 +168,7 @@ jobs:
       #     retention-days: 7
           
   upgrade-oldrelease-linux-x86:
-    runs-on: amd64-shanghai-mo
+    runs-on: ubuntu-latest
     name: Compatibility Test on Linux/x64(LAUNCH) oldrelease
     timeout-minutes: 90
 
