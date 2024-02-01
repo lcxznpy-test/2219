@@ -31,7 +31,7 @@ jobs:
           ref: ${{ env.release }}
 
       - name: Set up Go
-        uses: ./release/.github/actions/setup_env
+        uses: ./head/.github/actions/setup_env
 
       - name: Build MatrixOne for head
         run: |
@@ -190,7 +190,7 @@ jobs:
           ref: ${{ env.oldrelease }}
 
       - name: Set up Go
-        uses: ./release/.github/actions/setup_env
+        uses: ./head/.github/actions/setup_env
 
       - name: Build MatrixOne for head
         run: |
