@@ -44,24 +44,24 @@ jobs:
       - name: Create path for execution
         run: |
           cd $GITHUB_WORKSPACE && mkdir workspace 
-      - name: Start the Latest Version of ${{ env.release }} of MO
-        run: |
-          cd $GITHUB_WORKSPACE/workspace
-          mv $GITHUB_WORKSPACE/release/etc .
-          mv $GITHUB_WORKSPACE/release/mo-service .
-          mv $GITHUB_WORKSPACE/release/optools .
+      # - name: Start the Latest Version of ${{ env.release }} of MO
+      #   run: |
+      #     cd $GITHUB_WORKSPACE/workspace
+      #     mv $GITHUB_WORKSPACE/release/etc .
+      #     mv $GITHUB_WORKSPACE/release/mo-service .
+      #     mv $GITHUB_WORKSPACE/release/optools .
           
-          # Explicitly declare pessimistic mode
-          echo "==============cn configuration of upstram=============="
-          echo ""  >> ./etc/launch/cn.toml
-          echo '[cn.txn]' >> ./etc/launch/cn.toml
-          echo 'mode = "Pessimistic"' >> ./etc/launch/cn.toml
-          echo "==============dn configuration of upstram=============="
-          echo ""  >> ./etc/launch/tn.toml
-          echo '[dn.txn]' >> ./etc/launch/tn.toml
-          echo 'mode = "Pessimistic"' >> ./etc/launch/tn.toml
-          cat ./etc/launch/tn.toml     
-          ./optools/run_bvt.sh $GITHUB_WORKSPACE/workspace launch
+      #     # Explicitly declare pessimistic mode
+      #     echo "==============cn configuration of upstram=============="
+      #     echo ""  >> ./etc/launch/cn.toml
+      #     echo '[cn.txn]' >> ./etc/launch/cn.toml
+      #     echo 'mode = "Pessimistic"' >> ./etc/launch/cn.toml
+      #     echo "==============dn configuration of upstram=============="
+      #     echo ""  >> ./etc/launch/tn.toml
+      #     echo '[dn.txn]' >> ./etc/launch/tn.toml
+      #     echo 'mode = "Pessimistic"' >> ./etc/launch/tn.toml
+      #     cat ./etc/launch/tn.toml     
+      #     ./optools/run_bvt.sh $GITHUB_WORKSPACE/workspace launch
       - name: Clone test-tool repository
         uses: actions/checkout@v3
         with:
