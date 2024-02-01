@@ -1,7 +1,7 @@
 name: MO e2e upgrade CI Test
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 env:
   release: v1.1.0
@@ -19,8 +19,8 @@ jobs:
         with:
           fetch-depth: '3'
           path: ./head
-          repository: matrixorigin/matrixone
-          ref: main
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: checkout release ${{ env.release }}
         uses: actions/checkout@v3
@@ -178,8 +178,8 @@ jobs:
         with:
           fetch-depth: '3'
           path: ./head
-          repository: matrixorigin/matrixone
-          ref: main
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: checkout release ${{ env.oldrelease }}
         uses: actions/checkout@v3
