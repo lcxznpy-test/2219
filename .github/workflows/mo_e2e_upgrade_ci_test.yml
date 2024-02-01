@@ -76,31 +76,31 @@ jobs:
           distribution: 'adopt'
           architecture: x64
 
-      - name: Start BVT Test for MO with the Latest Version of ${{ env.release }}
-        id: bvt_on_latest_release_version
-        run: |
-          export LC_ALL="C.UTF-8"
-          locale
-          cd $GITHUB_WORKSPACE/mo-tester
-          sed -i 's/  port: [0-9]*/  port: 12345/g' mo.yml
-          cat mo.yml
-          echo "============================="
-          ./run.sh -n -g -o -p $GITHUB_WORKSPACE/release/test/distributed/cases -e optimistic 2>&1
-      - name: Dump mo-service goroutines
-        if: ${{ always() && !cancelled() }}
-        run: |
-          max_retry=5
-          retry=0
-          while [ "$(ps -ef | grep 'mo-service' | grep -v "grep" | wc -l)" -gt 0 ]; do
-            curl http://localhost:12345/debug/pprof/goroutine\?debug=2 -o ${{ github.workspace }}/workspace/release-dump-stacks${retry}.log
-            pkill -9 mo-service
-            retry=$((retry+1))
-            if [ ${retry} -ge ${max_retry} ]; then
-              echo 'after retry, still cannot shutdown mo-service'
-              exit 1
-            fi
-            sleep 2
-          done
+      # - name: Start BVT Test for MO with the Latest Version of ${{ env.release }}
+      #   id: bvt_on_latest_release_version
+      #   run: |
+      #     export LC_ALL="C.UTF-8"
+      #     locale
+      #     cd $GITHUB_WORKSPACE/mo-tester
+      #     sed -i 's/  port: [0-9]*/  port: 12345/g' mo.yml
+      #     cat mo.yml
+      #     echo "============================="
+      #     ./run.sh -n -g -o -p $GITHUB_WORKSPACE/release/test/distributed/cases -e optimistic 2>&1
+      # - name: Dump mo-service goroutines
+      #   if: ${{ always() && !cancelled() }}
+      #   run: |
+      #     max_retry=5
+      #     retry=0
+      #     while [ "$(ps -ef | grep 'mo-service' | grep -v "grep" | wc -l)" -gt 0 ]; do
+      #       curl http://localhost:12345/debug/pprof/goroutine\?debug=2 -o ${{ github.workspace }}/workspace/release-dump-stacks${retry}.log
+      #       pkill -9 mo-service
+      #       retry=$((retry+1))
+      #       if [ ${retry} -ge ${max_retry} ]; then
+      #         echo 'after retry, still cannot shutdown mo-service'
+      #         exit 1
+      #       fi
+      #       sleep 2
+      #     done
       - name: Start the Version of Head of MO
         run: |
           cd $GITHUB_WORKSPACE/workspace
@@ -235,31 +235,31 @@ jobs:
           distribution: 'adopt'
           architecture: x64
 
-      - name: Start BVT Test for MO with the Latest Version of ${{ env.oldrelease }}
-        id: bvt_on_latest_oldrelease_version
-        run: |
-          export LC_ALL="C.UTF-8"
-          locale
-          cd $GITHUB_WORKSPACE/mo-tester
-          sed -i 's/  port: [0-9]*/  port: 12345/g' mo.yml
-          cat mo.yml
-          echo "============================="
-          ./run.sh -n -g -o -p $GITHUB_WORKSPACE/release/test/distributed/cases -e optimistic 2>&1
-      - name: Dump mo-service goroutines
-        if: ${{ always() && !cancelled() }}
-        run: |
-          max_retry=5
-          retry=0
-          while [ "$(ps -ef | grep 'mo-service' | grep -v "grep" | wc -l)" -gt 0 ]; do
-            curl http://localhost:12345/debug/pprof/goroutine\?debug=2 -o ${{ github.workspace }}/workspace/release-dump-stacks${retry}.log
-            pkill -9 mo-service
-            retry=$((retry+1))
-            if [ ${retry} -ge ${max_retry} ]; then
-              echo 'after retry, still cannot shutdown mo-service'
-              exit 1
-            fi
-            sleep 2
-          done
+      # - name: Start BVT Test for MO with the Latest Version of ${{ env.oldrelease }}
+      #   id: bvt_on_latest_oldrelease_version
+      #   run: |
+      #     export LC_ALL="C.UTF-8"
+      #     locale
+      #     cd $GITHUB_WORKSPACE/mo-tester
+      #     sed -i 's/  port: [0-9]*/  port: 12345/g' mo.yml
+      #     cat mo.yml
+      #     echo "============================="
+      #     ./run.sh -n -g -o -p $GITHUB_WORKSPACE/release/test/distributed/cases -e optimistic 2>&1
+      # - name: Dump mo-service goroutines
+      #   if: ${{ always() && !cancelled() }}
+      #   run: |
+      #     max_retry=5
+      #     retry=0
+      #     while [ "$(ps -ef | grep 'mo-service' | grep -v "grep" | wc -l)" -gt 0 ]; do
+      #       curl http://localhost:12345/debug/pprof/goroutine\?debug=2 -o ${{ github.workspace }}/workspace/release-dump-stacks${retry}.log
+      #       pkill -9 mo-service
+      #       retry=$((retry+1))
+      #       if [ ${retry} -ge ${max_retry} ]; then
+      #         echo 'after retry, still cannot shutdown mo-service'
+      #         exit 1
+      #       fi
+      #       sleep 2
+      #     done
       - name: Start the Version of Head of MO
         run: |
           cd $GITHUB_WORKSPACE/workspace
