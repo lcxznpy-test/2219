@@ -33,3 +33,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION_2219 }}
           Issue_ID: ${{ github.event.issue.number }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
