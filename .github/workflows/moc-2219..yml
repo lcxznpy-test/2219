@@ -10,21 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: lcxznpy-test/CI
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      # - name: npn install dependency
+      #   run: |
+      #     npm install @octokit/action
+      #     npm install node-fetch
+      #     # 给node-fetch降级，不然2219.js导入不了
+      #     npm i node-fetch@2.6.1
+      # - run: node add-assignee-to-corr-project.js
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION_2219 }}
+      #     Issue_ID: ${{ github.event.issue.number }}
+      - name: assign issue
+        uses: lcxznpy-test/CI/.github/action@main
         with:
-          repository: lcxznpy-test/CI
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: npn install dependency
-        run: |
-          npm install @octokit/action
-          npm install node-fetch
-          # 给node-fetch降级，不然2219.js导入不了
-          npm i node-fetch@2.6.1
-      - run: node add-assignee-to-corr-project.js
-        env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_ACTION_2219 }}
           Issue_ID: ${{ github.event.issue.number }}
